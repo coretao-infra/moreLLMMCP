@@ -1,0 +1,5 @@
+{
+  "_note": "Sample MCP Server to Function App mapping. Copy this file to 'apps/deployment.map.json' and fill in your actual mappings. Do not track real mapping files in git.",
+  "mcp_server_helloworld": "mr42-helloworld-funcapp",
+  "mcp_server1": "mr42-morellmmcp"
+}
