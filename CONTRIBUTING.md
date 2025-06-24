@@ -20,5 +20,14 @@ This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md). Be respectf
 - Use the issue tracker for bugs, feature requests, or questions.
 - Provide as much detail as possible (logs, steps, environment).
 
+## Branch Protection & Pull Requests
+- The `main` branch is protected: **direct commits and pushes are not allowed**.
+- All changes must be submitted via a pull request (PR) from a non-main branch.
+- Each PR must:
+  - Receive at least one approval from a project maintainer (or as required by the branch protection rules)
+  - Pass all required status checks (CI, lint, tests)
+  - Resolve all review conversations before merging
+- Squash or rebase merging is recommended; merge commits are discouraged.
+
 ## License
 See [LICENSE](LICENSE).
