@@ -67,20 +67,25 @@ moreLLMMCP/
 
 ## Implementation Plan
 
-_Phased, actionable, and checkpointed steps for building moreLLMMCP. Each phase can be trialed independently. Checkboxes indicate completion status._
+_Phased, actionable, and checkpointed steps for building moreLLMMCP. All testing and validation is done in Azure—no local emulation required. Each phase can be trialed independently. Checkboxes indicate completion status._
 
-### Phase 1: Project Scaffold & Core Functionality
-- [ ] 1. Scaffold Azure Functions project (`func init --python --worker-runtime=python`)
-- [ ] 2. Create `handlers/` and implement `AzureOpenAIHandler` only
-- [ ] 3. Set up `registry.py` for handler selection logic
-- [ ] 4. Implement minimal MCP endpoint at `/runtime/webhooks/mcp/sse` (per MCP spec)
-- [ ] 5. Secure endpoint with Azure Functions system keys (header or query param)
-- [ ] 6. Add basic logging (Python `logging` module → Azure Monitor)
-- [ ] 7. Deploy to dev subscription (Azure-only, no local emulator)
-- [ ] 8. Smoke-test with GitHub Copilot Chat using default handler
-- [ ] 9. Document endpoints and settings in README/design doc
+### Phase 1: Azure-First Project Scaffold & Core Functionality
+- [x] 1. Set up Azure Function App in Azure Portal (Python 3.11, Consumption or Premium plan)
+    - Configure storage, identity, and app settings as needed.
+- [x] 2. Scaffold minimal codebase locally:
+    - Create the function folder (e.g., `mcp_sse/`).
+    - Implement a minimal HTTP-triggered function for `/runtime/webhooks/mcp/sse`.
+    - Add `handlers/`, `registry.py`, and minimal handler logic (even if stubbed).
+- [x] 3. Prepare deployment files:
+    - Ensure `requirements.txt` (with `azure-functions`, `pydantic`).
+    - Ensure `function.json` and `__init__.py` are correct for your function.
+    - Ensure `host.json` exists (even minimal: `{ "version": "2.0" }`).
+- [x] 4. Deploy to Azure (VS Code Azure Functions extension, GitHub Actions, or Portal “Deploy Code” feature).
+- [x] 5. Configure Azure App Settings (environment variables, keys, etc.) in the Azure Portal.
+- [ ] 6. Test the endpoint in Azure (Postman, curl, or Copilot Chat) and confirm a valid response.
+- [ ] 7. Document the endpoint, deployment process, and any required settings in README/design doc.
 
-**Checkpoint: End-to-end request/response flow with AzureOpenAIHandler, secure and observable, deployed to dev.**
+**Checkpoint: End-to-end request/response flow with AzureOpenAIHandler, secure and observable, deployed and tested in Azure.**
 
 ### Phase 2: Auth, Observability, and CI/CD
 - [ ] 10. Enable EasyAuth (Azure AD) for inbound auth; fall back to PAT locally
