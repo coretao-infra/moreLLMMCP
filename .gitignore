@@ -136,3 +136,10 @@ __azurite_db*__.json
 
 # Project scratchpad and skip folders
 scratchpad/skip/
+
+# Python cache and build artifacts
+.python_packages/
+apps/*/mcp/__pycache__/
+apps/*/functions/__pycache__/
+__pycache__/
+*.pyc
