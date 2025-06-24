@@ -80,8 +80,8 @@ _Phased, actionable, and checkpointed steps for building moreLLMMCP. All testing
     - Ensure `requirements.txt` (with `azure-functions`, `pydantic`).
     - Ensure `function.json` and `__init__.py` are correct for your function.
     - Ensure `host.json` exists (even minimal: `{ "version": "2.0" }`).
-- [x] 4. Deploy to Azure (VS Code Azure Functions extension, GitHub Actions, or Portal “Deploy Code” feature).
-- [x] 5. Configure Azure App Settings (environment variables, keys, etc.) in the Azure Portal.
+- [ ] 4. Deploy to Azure (VS Code Azure Functions extension, GitHub Actions, or Portal “Deploy Code” feature).
+- [ ] 5. Configure Azure App Settings (environment variables, keys, etc.) in the Azure Portal.
 - [ ] 6. Test the endpoint in Azure (Postman, curl, or Copilot Chat) and confirm a valid response.
 - [ ] 7. Document the endpoint, deployment process, and any required settings in README/design doc.
 

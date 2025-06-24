@@ -1,0 +1,17 @@
+# Example variable values for moreLLMMCP Terraform deployment
+# Copy to terraform.tfvars and edit for your environment
+
+subscription_id          = "00000000-0000-0000-0000-000000000000"
+resource_group_name      = "example-rg"
+location                = "westeurope"
+storage_account_name     = "examplestorageacct"
+function_app_name        = "example-functionapp"
+app_service_plan_name    = "example-plan"
+app_service_plan_sku     = "FC1"
+identity_name            = "example-identity"
+app_insights_name        = "example-ai"
+app_insights_retention_days = 90
+function_app_runtime     = "Python|3.11"
+function_app_worker_runtime = "python"
+action_group_name        = "example-actiongroup"
+action_group_short_name  = "SmartDetect"
