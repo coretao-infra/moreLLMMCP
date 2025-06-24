@@ -128,6 +128,25 @@ moreLLMMCP/
 - Do not mix deployment methods for the same environment. Pick one canonical approach (CLI or Core Tools) and document it.
 - CI/CD pipeline implementation is parked for now; revisit after direct deployment is validated.
 
+## Deployment Model: One or Many Function Apps (Slots)
+
+- **Current model:** By default, all deployments target a single Azure Function App (the current "slot"). Multiple MCP Server codebases exist in `apps/`, but only one is live at a time per Function App.
+- **Future-proof:** You can provision additional Function Apps (slots) via Terraform at any time. Each slot can run a different MCP Server for true isolation or multi-app scenarios.
+- **Switching servers:** To change which MCP Server is live in a slot, deploy a different app folder to that Function App using the deployment script and config for that slot.
+- **Isolation:** For side-by-side isolation, simply add more Function Apps in Terraform and deploy each MCP Server to its own slot.
+
+### How to Deploy
+1. Place your deployment config (copied from the sample) in the root of your MCP Server app folder (e.g., `apps/mcp_server_helloworld/`).
+2. Run the deployment script and specify the app name and (optionally) the config for the target slot:
+   ```pwsh
+   pwsh mcpdeploy/mcpcodedeploy.ps1 -AppName mcp_server_helloworld
+   # or, for a different slot/config:
+   pwsh mcpdeploy/mcpcodedeploy.ps1 -AppName mcp_server1 -ConfigPath apps/mcp_server1/mcpcodedeploy.config.json
+   ```
+3. The script will deploy the endpoints in that app to the specified Function App slot.
+
+See the config sample files in `mcpdeploy/` for the required format.
+
 ## Implementation Plan
 
 _Phased, actionable, and checkpointed steps for building moreLLMMCP. All testing and validation is done in Azure—no local emulation required. Each phase can be trialed independently. Checkboxes indicate completion status._

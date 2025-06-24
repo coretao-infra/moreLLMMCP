@@ -3,5 +3,6 @@
   "resource_group": "example-rg",
   "location": "westeurope",
   "subscription_id": "00000000-0000-0000-0000-000000000000",
-  "python_version": "3.11"
+  "python_version": "3.11",
+  "_note": "Sample deployment config. Copy to your app slot root (e.g., apps/mcp_server1/) and rename as needed. Real configs should NOT be tracked in git."
 }

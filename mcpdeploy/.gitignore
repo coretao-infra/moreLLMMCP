@@ -1,2 +1,3 @@
-# Ignore MCP code deploy config (contains environment-specific values)
-mcpcodedeploy.config.json
+# Only track example config files
+mcpcodedeploy.config*.json
+!mcpcodedeploy.config*.json.example

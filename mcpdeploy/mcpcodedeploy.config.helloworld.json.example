@@ -1,0 +1,8 @@
+{
+  "function_app_name": "<your-helloworld-function-app-name>",
+  "resource_group": "<your-resource-group>",
+  "location": "<your-azure-region>",
+  "subscription_id": "<your-subscription-id>",
+  "python_version": "3.11",
+  "_note": "Sample deployment config. Copy to your app slot root (e.g., apps/mcp_server_helloworld/) and rename as needed. Real configs should NOT be tracked in git."
+}

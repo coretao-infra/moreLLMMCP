@@ -1,0 +1,3 @@
+# Ignore all deployment configs in app slots
+mcpcodedeploy.config*.json
+!mcpcodedeploy.config*.json.example
