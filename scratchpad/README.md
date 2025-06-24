@@ -1,0 +1,1 @@
+the /scratchpad folder is to host temporary textual and code snips associated with the technology and development steps.
