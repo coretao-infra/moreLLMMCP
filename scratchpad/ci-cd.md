@@ -2,6 +2,8 @@
 
 This document describes the canonical approach to continuous integration and continuous deployment (CI/CD) for the moreLLMMCP project, following strict minimalism, security, and Azure-native best practices.
 
+# Implementation of CI/CD is temporarily parked/nice to have
+
 ## Goals
 - Automate infrastructure provisioning (Terraform) and code deployment (Azure Functions) using a public repository.
 - Ensure all secrets and environment-specific values are managed securely (never in source control).
@@ -39,6 +41,11 @@ This document describes the canonical approach to continuous integration and con
 ## Example Pipeline Scenarios
 - **GitHub Actions:** Use workflow YAML files in `.github/workflows/` to automate both Terraform and code deployment.
 - **Azure DevOps:** Use pipeline YAML files or classic UI for similar automation.
+
+## Canonical Deployment Decision
+- The project will use a single, minimal CI/CD pipeline for production deployments. This pipeline will automate code deployment using either Azure CLI or Azure Functions Core Tools, but not both.
+- For now, CI/CD implementation is parked. The immediate focus is on direct code deployment using Azure CLI or Core Tools, as described in the main design document.
+- Do not mix manual, CLI, and pipeline deployments for the same app code—choose one canonical method per environment.
 
 ## References
 - [Terraform GitHub Provider: github_actions_workflow](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_workflow)

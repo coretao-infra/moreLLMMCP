@@ -1,0 +1,7 @@
+{
+  "function_app_name": "example-functionapp",
+  "resource_group": "example-rg",
+  "location": "westeurope",
+  "subscription_id": "00000000-0000-0000-0000-000000000000",
+  "python_version": "3.11"
+}

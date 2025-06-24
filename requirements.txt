@@ -1,7 +1,0 @@
-# file: requirements.txt
-# description: Python dependencies for Azure Function App
-# version: 0.1.0
-# last updated: 2025-06-24
-
-azure-functions
-pydantic

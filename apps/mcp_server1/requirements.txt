@@ -1,0 +1,2 @@
+# MCP Server 1 requirements
+# Copy from project root or customize per app

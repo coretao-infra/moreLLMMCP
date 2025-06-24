@@ -1,5 +1,7 @@
 # Design Considerations for moreLLMMCP
 
+**Project structure and guidance are up to date as of June 2025. All MCP apps are under `apps/`, each as a self-contained Azure Function App. See below for canonical structure and best practices.**
+
 This document outlines the design philosophy and architectural decisions for the moreLLMMCP project.
 
 ## Project Overview
@@ -32,22 +34,61 @@ This document outlines the design philosophy and architectural decisions for the
 - Use a small registry (e.g., `registry.resolve_handler(request)`) to choose the adapter (via header, query parameter, or config default).
 - This eliminates duplication and makes it trivial to add/replace providers.
 
-## Folder / Module Layout
+## Project Structure (Current as of June 2025)
+
 ```
 moreLLMMCP/
-├─ handlers/           # provider adapters
-│  ├─ base.py
-│  ├─ azure_oai.py
-│  ├─ openai.py        # Not supported initially
-│  └─ hf.py            # not supported initially
-├─ registry.py         # handler selection
-├─ models.py           # Pydantic MCP request/response
-├─ functions/          # Azure Function entry points
-│  ├─ chat_completion_fn.py
-│  ├─ completion_fn.py
-│  └─ embeddings_fn.py
-└─ openapi/            # (do not create for now)
+├─ apps/            # All MCP apps (each is a Function App)
+│  └─ mcp_server1/  # First MCP app
+│      ├─ functions/
+│      │   ├─ sse/
+│      │   ├─ batch/
+│      │   ├─ admin/
+│      │   ├─ __init__.py
+│      │   ├─ chat_completion_fn.py
+│      │   ├─ completion_fn.py
+│      │   └─ embeddings_fn.py
+│      ├─ mcp/
+│      │   ├─ handlers/
+│      │   ├─ registry.py
+│      │   ├─ models.py
+│      │   └─ __init__.py
+│      ├─ requirements.txt
+│      ├─ host.json
+│      └─ ...
+├─ mcpdeploy/       # Code deployment scripts/configs
+├─ terraform/       # Infra-as-code (Terraform)
+├─ scratchpad/      # Design docs, CI/CD, etc.
+├─ .github/
+├─ .vscode/
+├─ .gitignore
+├─ .funcignore
+├─ README.md
+└─ ...
 ```
+
+**Note:**
+- `scratchpad/` contains design docs and CI/CD notes (serves as `docs/` in earlier diagrams).
+- `terraform/` and `mcpdeploy/` together serve as `infra/` in earlier diagrams.
+- No `shared/` folder is present; add if you need to share code/utilities between apps in the future.
+
+### Rationale & Best Practices
+- **Strong Top-Level Folders:**
+  - `apps/` for all MCP apps (each is a deployable Function App, cleanly separated).
+  - `mcpdeploy/` for code deployment scripts and configurations.
+  - `terraform/` for all infrastructure-as-code and deployment automation.
+  - `scratchpad/` for design docs, CI/CD notes, and other temporary files.
+- **App Isolation:**
+  - Each MCP app is self-contained: its own `functions/`, `mcp/`, `requirements.txt`, and `host.json`.
+  - Easy to add, remove, or promote MCP apps independently.
+- **Discoverability & Maintainability:**
+  - Clear boundaries between apps, infra, shared code, and docs.
+  - No clutter at the repo root—everything is grouped by purpose.
+- **Scalability:**
+  - Supports any number of MCP apps, each with any number of endpoints.
+  - Shared code is optional and explicit.
+- **Azure Functions Compliance:**
+  - Each app is deployable as a standard Azure Function App (requirements and host config at app root).
 
 ## Azure Functions Choices
 - Use the Python 3.11 Isolated Process worker for cleaner DI and easy unit testing.
@@ -73,6 +114,19 @@ moreLLMMCP/
 - Structured logging via `logging.getLogger(__name__)` → Azure Monitor.
 - Application Insights traces + custom metrics (e.g., tokens_in, tokens_out).
 - Correlate provider latency and errors for each call.
+
+## Canonical MCP Code Deployment
+- Deploy the MCP (Azure Functions) code to the provisioned Function App using either:
+  - Azure Functions Core Tools:
+    ```
+    func azure functionapp publish <function_app_name> --python
+    ```
+  - Azure CLI:
+    ```
+    az functionapp deployment source config-zip --resource-group <resource_group> --name <function_app_name> --src <zip_file>
+    ```
+- Do not mix deployment methods for the same environment. Pick one canonical approach (CLI or Core Tools) and document it.
+- CI/CD pipeline implementation is parked for now; revisit after direct deployment is validated.
 
 ## Implementation Plan
 
@@ -102,7 +156,32 @@ _Phased, actionable, and checkpointed steps for building moreLLMMCP. All testing
     - Confirm only required Azure resource providers are registered.
     - Ensure plan/apply works with classic Consumption plan and Linux Function App.
     - Confirm no Flex Consumption or unsupported blocks remain.
-- [ ] 7. Deploy to Azure the MCP code using the new Terraform workflow.
+- [ ] 7. Deploy to Azure the MCP code using Azure Functions Core Tools.
+
+    **Canonical MCP Code Deployment (Azure Functions Core Tools)**
+    - Use Azure Functions Core Tools (`func azure functionapp publish`) as the single, canonical method for deploying the MCP Python code to the provisioned Function App.
+    - This approach is minimal, robust, and natively supported by Azure for Python Functions.
+    - **Steps:**
+      1. Ensure all code, dependencies (`requirements.txt`), and function metadata (`function.json`, `host.json`) are present and correct in your local workspace.
+      2. Authenticate to Azure (e.g., `az login` or via environment variables/service principal if in CI).
+      3. Run the following command from the project root:
+         ```sh
+         func azure functionapp publish <function_app_name> --python
+         ```
+         - Replace `<function_app_name>` with the name of your Azure Function App provisioned by Terraform.
+      4. The tool will build, package, and deploy your code in one step, handling all Python-specific requirements.
+      5. After deployment, verify the Function App in the Azure Portal and proceed to configure App Settings as needed.
+    - **Best Practices:**
+      - Do not mix deployment methods (CLI, zip, or pipelines) for the same environment.
+      - Document the deployment command and any required environment variables in the README.
+      - Use the same method for both manual and automated (CI/CD) deployments for consistency.
+    - **Pros:**
+      - Minimal, one-command deployment.
+      - Handles Python-specific build logic automatically.
+      - Natively supported and well-documented by Azure.
+    - **Cons:**
+      - Requires Core Tools to be installed on the deployment machine or runner.
+      - Less flexible for custom build steps (but ideal for canonical Python Azure Functions).
 - [ ] 8. Configure Azure App Settings for the MCP Server (environment variables, keys, etc.) in the Azure Portal.
 - [ ] 9. Test the endpoint in Azure (Postman, curl, or Copilot Chat) and confirm a valid response.
 - [ ] 10. Document the endpoint, deployment process, and any required settings in README/design doc.

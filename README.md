@@ -16,6 +16,12 @@ An MCP Server coded in Python and implemented as Azure Functions, exposing LLM e
 2. See `scratchpad/design-considerations.md` for architecture and implementation plan
 3. Follow the Implementation Plan phases for setup and deployment
 
+## Project Structure (2025+)
+- All MCP apps are under `apps/`, each in its own folder (e.g., `apps/mcp_server1/`).
+- Each app is a self-contained Azure Function App with its own endpoints, business logic, requirements, and config.
+- Shared code (if any) goes in `shared/`. Infra and docs are in their own top-level folders.
+- See `scratchpad/design-considerations.md` for the canonical structure, rationale, and best practices.
+
 ## Documentation
 - **Design & Architecture:** See [`scratchpad/design-considerations.md`](scratchpad/design-considerations.md)
 - **Contributing:** See [`CONTRIBUTING.md`](CONTRIBUTING.md)
