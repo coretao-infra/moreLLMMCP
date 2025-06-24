@@ -1,18 +1,21 @@
 # Design Considerations for moreLLMMCP
 
-This document outlines the initial design considerations and architectural thoughts for the moreLLMMCP project.
+This document outlines the design philosophy and architectural decisions for the moreLLMMCP project.
 
 ## Project Overview
 - **Project:** moreLLMMCP
 - **Description:** An MCP Server coded in Python and implemented as Azure Functions, exposing LLM endpoints (like Azure OpenAI) intended to be consumed via GitHub Copilot Chat.
 
-# Design principles
-- Do not reinvent the wheel; always check for modern, standard solutions first
-- Canonical, atomic code—zero tolerance for duplicity
-- Maximize maintainability via separation of concerns and best practices
-- Keep a per-file minimal header including version tracking (see below for format)
-- Track project version in a central file (e.g., `morellmmcp/__init__.py`)
-- Maintain a `CHANGELOG.md` for major project changes
+# Design Principles
+- **Always use the most recent, natively supported Azure and Terraform features.**
+- **No legacy ARM/JSON or PowerShell deployment artifacts.**
+- **All infrastructure is managed as native Terraform, with only essential resources.**
+- Do not reinvent the wheel; always check for modern, standard solutions first.
+- Canonical, atomic code—zero tolerance for duplicity.
+- Maximize maintainability via separation of concerns and best practices.
+- Keep a per-file minimal header including version tracking (see below for format).
+- Track project version in a central file (e.g., `morellmmcp/__init__.py`).
+- Maintain a `CHANGELOG.md` for major project changes.
 
 ### Per-file header example (add to top of every .py file):
 ```
@@ -58,7 +61,13 @@ moreLLMMCP/
 - Use Python 3.11 Isolated Process worker for clean dependency injection and testability.
 - Use decorators for Azure Function triggers and bindings, but keep business logic atomic and minimal.
 - Avoid sample-specific complexity—implement only what is needed for your LLM handler use case.
-- Reference the [architecture diagram](https://github.com/Azure-Samples/remote-mcp-functions-python/blob/main/architecture-diagram.png) for high-level structure, but question any unnecessary abstraction.
+
+## Infrastructure as Code (IaC) Philosophy
+- **Only use native Terraform for Azure deployments.**
+- **No ARM templates, Bicep, or PowerShell deployment scripts in production.**
+- **All environment-specific values are variables; no secrets or IDs are hardcoded.**
+- **No orphaned or legacy files in the repo.**
+- **.gitignore is strictly enforced for all sensitive, state, and local files.**
 
 ## Observability
 - Structured logging via `logging.getLogger(__name__)` → Azure Monitor.
@@ -70,7 +79,7 @@ moreLLMMCP/
 _Phased, actionable, and checkpointed steps for building moreLLMMCP. All testing and validation is done in Azure—no local emulation required. Each phase can be trialed independently. Checkboxes indicate completion status._
 
 ### Phase 1: Azure-First Project Scaffold & Core Functionality
-- [x] 1. Set up Azure Function App in Azure Portal (Python 3.11, Consumption or Premium plan)
+- [x] 1. Set up Azure Function App in Azure Portal (Python 3.11, Consumption plan)
     - Configure storage, identity, and app settings as needed.
 - [x] 2. Scaffold minimal codebase locally:
     - Create the function folder (e.g., `mcp_sse/`).
@@ -80,12 +89,26 @@ _Phased, actionable, and checkpointed steps for building moreLLMMCP. All testing
     - Ensure `requirements.txt` (with `azure-functions`, `pydantic`).
     - Ensure `function.json` and `__init__.py` are correct for your function.
     - Ensure `host.json` exists (even minimal: `{ "version": "2.0" }`).
-- [ ] 4. Deploy to Azure (VS Code Azure Functions extension, GitHub Actions, or Portal “Deploy Code” feature).
-- [ ] 5. Configure Azure App Settings (environment variables, keys, etc.) in the Azure Portal.
-- [ ] 6. Test the endpoint in Azure (Postman, curl, or Copilot Chat) and confirm a valid response.
-- [ ] 7. Document the endpoint, deployment process, and any required settings in README/design doc.
+- [x] 4. Migrate all infrastructure to **native Terraform**:
+    - Remove all ARM templates, Bicep, and PowerShell deployment scripts.
+    - Create minimal `main.tf`, `variables.tf`, and example `.tfvars` for only essential resources (Function App, Storage, App Service Plan, Managed Identity, Application Insights, Action Group).
+    - Ensure all environment-specific values are variables; no secrets or IDs are hardcoded.
+    - Strictly enforce `.gitignore` for all sensitive, state, and local files.
+- [x] 5. Refactor and robustify deployment scripts:
+    - Implement canonical, stepwise `deploy.ps1` with canonical log naming and import logic.
+    - Ensure all logs, state, and plan files are excluded from git.
+    - Remove orphaned and legacy files from the repo.
+- [x] 6. Validate and test Terraform deployment:
+    - Confirm only required Azure resource providers are registered.
+    - Ensure plan/apply works with classic Consumption plan and Linux Function App.
+    - Confirm no Flex Consumption or unsupported blocks remain.
+- [ ] 7. Deploy to Azure the MCP code using the new Terraform workflow.
+- [ ] 8. Configure Azure App Settings for the MCP Server (environment variables, keys, etc.) in the Azure Portal.
+- [ ] 9. Test the endpoint in Azure (Postman, curl, or Copilot Chat) and confirm a valid response.
+- [ ] 10. Document the endpoint, deployment process, and any required settings in README/design doc.
 
-**Checkpoint: End-to-end request/response flow with AzureOpenAIHandler, secure and observable, deployed and tested in Azure.**
+**Checkpoint:**  
+End-to-end request/response flow with AzureOpenAIHandler, secure and observable, deployed and tested in Azure, with all infrastructure managed natively via Terraform.
 
 ### Phase 2: Auth, Observability, and CI/CD
 - [ ] 10. Enable EasyAuth (Azure AD) for inbound auth; fall back to PAT locally

@@ -7,6 +7,9 @@ An MCP Server coded in Python and implemented as Azure Functions, exposing LLM e
 - Canonical handler layer for easy LLM provider extension
 - Secure, Azure-only deployment (no local emulator)
 - Atomic, testable, and observable endpoints
+- **Always use the most recent, natively supported Azure and Terraform features**
+- **No legacy ARM/JSON or PowerShell deployment artifacts**
+- **All infrastructure is managed as native Terraform, with only essential resources**
 
 ## Quick Start
 1. Clone the repo
