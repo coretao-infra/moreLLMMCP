@@ -1,5 +1,7 @@
-# DO NOT include azure-functions-worker in this file
-# The Python Worker is managed by Azure Functions platform
-# Manually managing azure-functions-worker may cause unexpected issues
+# file: requirements.txt
+# description: Python dependencies for Azure Function App
+# version: 0.1.0
+# last updated: 2025-06-24
 
 azure-functions
+pydantic
