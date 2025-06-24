@@ -10,6 +10,18 @@ This document outlines the initial design considerations and architectural thoug
 - Do not reinvent the wheel; always check for modern, standard solutions first
 - Canonical, atomic code—zero tolerance for duplicity
 - Maximize maintainability via separation of concerns and best practices
+- Keep a per-file minimal header including version tracking (see below for format)
+- Track project version in a central file (e.g., `morellmmcp/__init__.py`)
+- Maintain a `CHANGELOG.md` for major project changes
+
+### Per-file header example (add to top of every .py file):
+```
+# file: handlers/azure_oai.py
+# description: Azure OpenAI handler for MCP server
+# version: 0.1.0
+# last updated: 2025-06-24
+```
+
 
 ## Canonical LLM Handler Layer
 - Implement one abstract base class (e.g., `AbstractLLMHandler`) with `chat_completion`, `completion`, `embeddings` methods.

@@ -29,5 +29,11 @@ This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md). Be respectf
   - Resolve all review conversations before merging
 - Squash or rebase merging is recommended; merge commits are discouraged.
 
+## Versioning & File Headers
+- Every Python file must start with a minimal header including file name, description, version, and last updated date.
+- The project version is tracked in `morellmmcp/__init__.py` as `__version__`.
+- Major changes and releases are tracked in `CHANGELOG.md`.
+- Use git tags for stable releases (e.g., `v0.1.0`).
+
 ## License
 See [LICENSE](LICENSE).
